@@ -12,6 +12,7 @@
         ximg{
            width: 100px;
         }
+        
     </style>
 </head>
 <body>
@@ -19,9 +20,34 @@
     <!-- <img xsrc="img-11.jpg" alt="" srcset="" id="_img"> -->
     <script src="imageFiltering.js"></script>
     <script>
-    var ft=new ImageFiltering('img-3.jpg',{
-        size:180
+    var ft=new ImageFiltering({
+        src:"img-9.jpg",
+        // src:"img-3.jpg",
+
+        quality:100,
+        imageType:"image/jpeg",
+        output:"dataURL",
+
+        size:180*2,
+
+        // filterCoords:[100,100,100,100],
+        filterIntensity:50,
+        filter: "smooth hr painting"
     })
+
+    // ft.onerror = function(msg){
+    //     console.error(msg);
+    // }
+    // ft.onload = function(e){
+    //    // console.log('ready');
+    // }
+    // ft.onprogress = function(e){
+    //    // console.log(e);
+    // }
+    ft.onready = function(e){
+        console.log(e);
+    }
+    
     console.log(ft);
     </script>
 </body>

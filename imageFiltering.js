@@ -1,13 +1,30 @@
 function ImageFiltering() {
-    this.then=9
+     
+    if (this instanceof Window) {
+        return;
+    }
+
+    this.onprogress=null
+    this.onready=null
+    this.onerror=null
+    this.onload=null
+
+
 
     var variables = {
-        class:this,
+        resolve : new Function(),
+        reject : new Function(),
+        class: this,
         canv: document.createElement('canvas'),
-        mx: 50000,
-        mx: 10000,
-        mx: 3000,
-        mv: 50,
+        img: arguments[0].src,
+        renderingSpeed: 3000,
+        quality:typeof arguments[0].quality == "number"?arguments[0].quality:1,
+        imageType:typeof arguments[0].imageType == "string"?arguments[0].imageType:"image/jpeg",
+        output:typeof arguments[0].output == "string"?arguments[0].output.toUpperCase():null,
+        effect:typeof arguments[0].filter == "string"?arguments[0].filter.toUpperCase().replace(/[^a-z0-9]/ig,'').replace(/\d/g,"_$&"):null,
+        effectIntensity:typeof arguments[0].filterIntensity == "number"?arguments[0].filterIntensity:50,
+        size:typeof arguments[0].size === "number"?arguments[0].size:null,
+        coords:(arguments[0].filterCoords instanceof Array)&&arguments[0].filterCoords.length===4?arguments[0].filterCoords:null,
         paints_0: [
             [211, 183, 43, 255], // x
             [134, 180, 34, 255], // x
@@ -99,63 +116,125 @@ function ImageFiltering() {
                     return arguments[0]
                 }
             }
+        },
+        callDelay : function(){
+            a=arguments;
+            setTimeout(function() {
+                    if ((a[0] = variables.class["on"+a[0]]) instanceof Function) {
+                    a[0](a[1])
+                }
+                }, 0);
+        },
+        call:function(){
+                    if ((arguments[0] = variables.class["on"+arguments[0]]) instanceof Function) {
+                        arguments[0](arguments[1])
+                }
         }
     }
 
+    if (typeof variables.img === "string") {
+        variables.img=new Image();
+        variables.img.src=arguments[0].src
+    }else{
+        return variables.callDelay('error',"invalid source> src: <Path, Url, HTMLImageElement, Blob, Bitmap>")
+    }
+
+    // this.done=new Promise(function(){variables.resolve=arguments[0];variables.reject=arguments[1]})
     // console.log(variables.RGBCondition.LRRange([87, 87, 87,255],[20, 20, 20,255], 80));
     // console.log(variables.RGBQuery.LRRange([87, 87, 87,255],[80, 80, 80,255], 50));
 
-    var img = new Image();
-    img.src = "img-9.jpg";
-    document.body.appendChild(img)
-    variables.canv.style.zoom=2.4
+
+    // variables.img.style.zoom = variables.canv.style.zoom = 0.2
+    document.body.appendChild(variables.img)
     document.body.appendChild(variables.canv)
 
 
 
 
     function onready() {
-        var r = 180
+        // var r =null// 180 * 1.4
+        // var r =180 * 1.4
+        if (arguments[0] instanceof Event) {
+            if (!variables.size) {
+                variables.canv.width = variables.img.naturalHeight //= variables.img.width-20
+                variables.canv.height = variables.img.naturalWidth //= variables.img.height-20
+            }else{
+                variables.img.width = variables.canv.width = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalHeight) * (variables.size / 2)
+                variables.img.height = variables.canv.height = ((variables.img.naturalWidth  + variables.img.naturalHeight ) / variables.img.naturalWidth ) * (variables.size / 2)
+            }
+            // console.dir(variables.img);
+            // console.log(variables.img.width,variables.img.height);
+    
+    
+    if (!variables.coords) {
+        variables.coords=[0,0,variables.canv.width,variables.canv.height]
+    }
+    
+    variables.width = variables.canv.width;
+    variables.height = variables.canv.height;
+    
+    variables.canv = variables.canv.getContext('2d');
+    variables.canv.drawImage(variables.img, 0, 0, variables.width, variables.height)
+    
+    var gb_var = {
+        imgdata: variables.canv.getImageData(0, 0, variables.width, variables.height),
+        pr: [-255, -255, -255, -255],
+        nx: [-255, -255, -255, -255],
+        i: 0,
+        cpw: 0,
+        cph: 0
+    };
+}else{
+      var gb_var=arguments[0]
+      arguments[1].__proto__=variables
+      variables = arguments[1]
+}
 
 
-        img.width = variables.canv.width = ((img.width + img.height) / img.height) * (r / 2)
-        img.height = variables.canv.height = ((img.width + img.height) / img.width) * (r / 2)
+        gb_var.EffectFilter=new IMAGEStriping.Effect(gb_var)
 
-
-
-        variables.canv = variables.canv.getContext('2d');
-
-        variables.canv.drawImage(img, 0, 0, variables.canv.canvas.width, variables.canv.canvas.height)
-        var gb_var = {
-            imgdata: variables.canv.getImageData(0, 0, variables.canv.canvas.width, variables.canv.canvas.height),
-            pr: [-255, -255, -255, -255],
-            nx: [-255, -255, -255, -255],
-            i: 0,
-            cpw: 0,
-            cph: 0
-        };
-
-        requestAnimationFrame(ProcessImage(gb_var))
-        // requestAnimationFrame(function(){ProcessImage(gb_var)()})
-        // console.log(gb_var.imgdata.data.length);
+        variables.call('load')
+        if (gb_var.EffectFilter.hasOwnProperty(variables.effect)) {
+            requestAnimationFrame(ProcessImage(gb_var))
+        //   requestAnimationFrame(function(){ProcessImage(gb_var)()})
+        }else{
+        variables.call('progress',100)
+        ProcessImageComplete(gb_var)
+        }
     }
 
     function ProcessImage(gb_var) {
         return function () {
             if (gb_var.i >= gb_var.imgdata.data.length) {
+                ProcessImageComplete(gb_var,true)
                 return
             };
             if (gb_var.cpw === gb_var.imgdata.width) {
                 gb_var.cpw = 0;
                 gb_var.cph += 1;
             }
-
             new IMAGEStriping(gb_var).default()
+            variables.call('progress',Math.min((gb_var.i*100)/gb_var.imgdata.data.length,100))
             requestAnimationFrame(arguments.callee)
         }
     }
 
+function ProcessImageComplete(gb_var,clearRect) {
+    if (clearRect) {
+        variables.canv.clearRect(0,0,variables.width,variables.height)
+        variables.canv.putImageData(gb_var.imgdata,0,0)
+    }
 
+    if (variables.output==="CANVAS") {
+        variables.call('ready',variables.canv)
+    }else if (variables.output==="IMAGEDATE") {
+        variables.call('ready',gb_var.imgdata)
+    }else if (variables.output==="DATAURL") {
+        variables.call('ready',variables.canv.canvas.toDataURL(variables.imageType,variables.quality))
+    }else if (variables.output==="BLOB") {
+        // variables.call('ready',variables.canv.canvas.toDataURL(variables.imageType||"image/jpeg",variables.quality||1))
+    }
+}
 
     function sameRGB(pr, data, mv) {
         if (!mv) {
@@ -176,7 +255,7 @@ function ImageFiltering() {
 
     function IMAGEStriping(gb_var) {
         this.test = function () {
-            for (var _i = 0; _i < variables.mx; _i++) {
+            for (var _i = 0; _i < variables.renderingSpeed; _i++) {
                 if (gb_var.i >= gb_var.imgdata.data.length) {
                     // variables.canv.clearRect(0,0,variables.canv.width,variables.canv.height)
                     // variables.canv.putImageData(gb_var.imgdata,0,0)
@@ -185,14 +264,14 @@ function ImageFiltering() {
                 gb_var.pr = [gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]]
                 if (
                     true ||
-                    (gb_var.pr[0] > gb_var.imgdata.data[gb_var.i] ? gb_var.imgdata.data[gb_var.i] + variables.mv >= gb_var.pr[0] : gb_var.pr[0] + variables.mv >= gb_var.imgdata.data[gb_var.i]) &&
-                    (gb_var.pr[1] > gb_var.imgdata.data[gb_var.i + 1] ? gb_var.imgdata.data[gb_var.i + 1] + variables.mv >= gb_var.pr[1] : gb_var.pr[1] + variables.mv >= gb_var.imgdata.data[gb_var.i + 1]) &&
-                    (gb_var.pr[2] > gb_var.imgdata.data[gb_var.i + 2] ? gb_var.imgdata.data[gb_var.i + 2] + variables.mv >= gb_var.pr[2] : gb_var.pr[2] + variables.mv >= gb_var.imgdata.data[gb_var.i + 2]) &&
-                    (gb_var.pr[3] > gb_var.imgdata.data[gb_var.i + 3] ? gb_var.imgdata.data[gb_var.i + 3] + variables.mv >= gb_var.pr[3] : gb_var.pr[3] + variables.mv >= gb_var.imgdata.data[gb_var.i + 3])
+                    (gb_var.pr[0] > gb_var.imgdata.data[gb_var.i] ? gb_var.imgdata.data[gb_var.i] + variables.effectIntensity >= gb_var.pr[0] : gb_var.pr[0] + variables.effectIntensity >= gb_var.imgdata.data[gb_var.i]) &&
+                    (gb_var.pr[1] > gb_var.imgdata.data[gb_var.i + 1] ? gb_var.imgdata.data[gb_var.i + 1] + variables.effectIntensity >= gb_var.pr[1] : gb_var.pr[1] + variables.effectIntensity >= gb_var.imgdata.data[gb_var.i + 1]) &&
+                    (gb_var.pr[2] > gb_var.imgdata.data[gb_var.i + 2] ? gb_var.imgdata.data[gb_var.i + 2] + variables.effectIntensity >= gb_var.pr[2] : gb_var.pr[2] + variables.effectIntensity >= gb_var.imgdata.data[gb_var.i + 2]) &&
+                    (gb_var.pr[3] > gb_var.imgdata.data[gb_var.i + 3] ? gb_var.imgdata.data[gb_var.i + 3] + variables.effectIntensity >= gb_var.pr[3] : gb_var.pr[3] + variables.effectIntensity >= gb_var.imgdata.data[gb_var.i + 3])
                 ) {
 
                     variables.paints_0.forEach(function () {
-                        if (sameRGB(gb_var.pr, arguments[0], variables.mv)) {
+                        if (sameRGB(gb_var.pr, arguments[0], variables.effectIntensity)) {
                             gb_var.pr = arguments[0]
                         }
                     });
@@ -217,18 +296,25 @@ function ImageFiltering() {
         }
 
         this.default = function () {
-            for (var _i = 0; _i < variables.mx; _i++) {
+            for (var _i = 0; _i < variables.renderingSpeed; _i++) {
                 if (gb_var.i >= gb_var.imgdata.data.length) {
-                    //  variables.canv.clearRect(0,0,variables.canv.width,variables.canv.height)
-                    // variables.canv.putImageData(gb_var.imgdata,0,0)
                     return
                 };
 
-                // new IMAGEStriping.Effect(gb_var).Untitled_1()
-                // new IMAGEStriping.Effect(gb_var).Untitled_0()
-                // new IMAGEStriping.Effect(gb_var).HRPainting()
-                new IMAGEStriping.Effect(gb_var).HRPainting("smooth")
-                // new IMAGEStriping.Effect(gb_var).OilPaints()
+                if (
+                    (gb_var.cpw>=variables.coords[0]&&gb_var.cph>=variables.coords[1])
+                    &&
+                    (gb_var.cpw<=variables.coords[2]+variables.coords[0]&&gb_var.cph<=variables.coords[3]+variables.coords[1])
+                    ) {
+                        gb_var.EffectFilter[variables.effect]()
+                        // new IMAGEStriping.Effect(gb_var).Untitled_2()
+                          // new IMAGEStriping.Effect(gb_var).Untitled_1()
+                         // new IMAGEStriping.Effect(gb_var).Untitled_0()
+                        // new IMAGEStriping.Effect(gb_var).HRPainting()
+                       // new IMAGEStriping.Effect(gb_var).HRPainting("smooth")
+                      // new IMAGEStriping.Effect(gb_var).OilPaints()
+                    }
+                    
                 variables.canv.fillStyle = `rgba(${gb_var.imgdata.data[gb_var.i]},${gb_var.imgdata.data[gb_var.i+1]},${gb_var.imgdata.data[gb_var.i+2]},${gb_var.imgdata.data[gb_var.i+3]})`;
                 variables.canv.fillRect(gb_var.cpw, gb_var.cph, 1, 1);
                 gb_var.cpw += 1
@@ -240,11 +326,11 @@ function ImageFiltering() {
     }
 
     IMAGEStriping.Effect = function (gb_var) {
-        this.HRPainting = function () {
-            if (sameRGB(gb_var.pr, [gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], variables.mv)) {
+        this.HRPAINTING = function () {
+            if (sameRGB(gb_var.pr, [gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], variables.effectIntensity)) {
                 if (arguments[0] === "smooth") {
                     variables.paints_0.forEach(function () {
-                        if (sameRGB(gb_var.pr, arguments[0], variables.mv)) {
+                        if (sameRGB(gb_var.pr, arguments[0], variables.effectIntensity)) {
                             gb_var.pr = arguments[0]
                         }
                     });
@@ -259,9 +345,13 @@ function ImageFiltering() {
             }
         }
 
-        this.OilPaints = function () {
+        this.SMOOTHHRPAINTING = function(){
+            gb_var.EffectFilter.HRPAINTING('smooth')
+        }
+
+        this.OILPAINTS = function () {
             variables.paints_0.forEach(function () {
-                if (sameRGB([gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], arguments[0], variables.mv)) {
+                if (sameRGB([gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], arguments[0], variables.effectIntensity)) {
                     gb_var.imgdata.data[gb_var.i] = arguments[0][0],
                         gb_var.imgdata.data[gb_var.i + 1] = arguments[0][1],
                         gb_var.imgdata.data[gb_var.i + 2] = arguments[0][2],
@@ -270,9 +360,9 @@ function ImageFiltering() {
             });
         }
 
-        this.Untitled_0 = function () {
+        this.UNTITLED_0 = function () {
             variables.paints_0.forEach(function () {
-                if (variables.RGBQuery.LRRange(arguments[0], [gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], variables.mv)) {
+                if (variables.RGBQuery.LRRange(arguments[0], [gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], variables.effectIntensity)) {
                     gb_var.imgdata.data[gb_var.i] = arguments[0][0],
                         gb_var.imgdata.data[gb_var.i + 1] = arguments[0][1],
                         gb_var.imgdata.data[gb_var.i + 2] = arguments[0][2],
@@ -281,9 +371,9 @@ function ImageFiltering() {
             });
         }
 
-        this.Untitled_1 = function () {
+        this.UNTITLED_1 = function () {
             variables.paints_1.forEach(function () {
-                if (variables.RGBCondition.LRRange(arguments[0][0], [gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], arguments[0][2] || variables.mv)) {
+                if (variables.RGBCondition.LRRange(arguments[0][0], [gb_var.imgdata.data[gb_var.i], gb_var.imgdata.data[gb_var.i + 1], gb_var.imgdata.data[gb_var.i + 2], gb_var.imgdata.data[gb_var.i + 3]], arguments[0][2] || variables.effectIntensity)) {
                     gb_var.imgdata.data[gb_var.i] = arguments[0][1][0],
                         gb_var.imgdata.data[gb_var.i + 1] = arguments[0][1][1],
                         gb_var.imgdata.data[gb_var.i + 2] = arguments[0][1][2],
@@ -291,8 +381,14 @@ function ImageFiltering() {
                 }
             });
         }
+
+        this.UNTITLED_2 = function () {
+                    gb_var.imgdata.data[gb_var.i] = gb_var.imgdata.data[gb_var.i] + variables.effectIntensity,
+                        gb_var.imgdata.data[gb_var.i + 1] = gb_var.imgdata.data[gb_var.i+1] - variables.effectIntensity,
+                        gb_var.imgdata.data[gb_var.i + 2] = gb_var.imgdata.data[gb_var.i+2] - variables.effectIntensity;
+        }
     }
-    img.onload = onready;
+    variables.img.onload = onready;
 
     // console.log(sameRGB([80, 20, 0,1],[0, 0 ,0,1]));
 }
