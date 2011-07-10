@@ -9,26 +9,29 @@
         p{
             color: black;
         }
-        ximg{
-           width: 100px;
+        img{
+           width: 200px;
         }
         
     </style>
 </head>
 <body>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero temporibus adipisci porro aperiam doloribus, quam doloremque, maiores, consequuntur dolor modi consequatur atque voluptate dolorem aut repudiandae quod blanditiis praesentium perferendis?</p>
-    <!-- <img xsrc="img-11.jpg" alt="" srcset="" id="_img"> -->
+    <img src="img-11.jpg" id="_img" onload="console.log(7777)">
     <script src="imageFiltering.js"></script>
     <script>
     var ft=new ImageFiltering({
         src:"img-9.jpg",
-        // src:"img-3.jpg",
+        src:"img-3.jpg",
+        src:"img-11.jpg",
+        src:_img,
 
-        quality:100,
+        quality:1,
         imageType:"image/jpeg",
         output:"dataURL",
 
         size:180*2,
+        size:200,
 
         // filterCoords:[100,100,100,100],
         filterIntensity:50,
@@ -41,9 +44,9 @@
     // ft.onload = function(e){
     //    // console.log('ready');
     // }
-    // ft.onprogress = function(e){
-    //    // console.log(e);
-    // }
+    ft.onprogress = function(e){
+       console.log(e);
+    }
     ft.onready = function(e){
         console.log(e);
     }

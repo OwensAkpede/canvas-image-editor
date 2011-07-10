@@ -132,37 +132,30 @@ function ImageFiltering() {
         }
     }
 
-    if (typeof variables.img === "string") {
-        variables.img=new Image();
-        variables.img.src=arguments[0].src
-    }else{
-        return variables.callDelay('error',"invalid source> src: <Path, Url, HTMLImageElement, Blob, Bitmap>")
-    }
-
-    // this.done=new Promise(function(){variables.resolve=arguments[0];variables.reject=arguments[1]})
-    // console.log(variables.RGBCondition.LRRange([87, 87, 87,255],[20, 20, 20,255], 80));
-    // console.log(variables.RGBQuery.LRRange([87, 87, 87,255],[80, 80, 80,255], 50));
-
-
-    // variables.img.style.zoom = variables.canv.style.zoom = 0.2
-    document.body.appendChild(variables.img)
-    document.body.appendChild(variables.canv)
 
 
 
 
     function onready() {
+
+        if(variables.devMode){
+  //  variables.call()
+}
         // var r =null// 180 * 1.4
         // var r =180 * 1.4
-        if (arguments[0] instanceof Event) {
+        if (arguments[0] instanceof Event||arguments[0]===true) {
             if (!variables.size) {
+                // variables.img.width = 
                 variables.canv.width = variables.img.naturalHeight //= variables.img.width-20
+                // variables.img.height = 
                 variables.canv.height = variables.img.naturalWidth //= variables.img.height-20
             }else{
-                variables.img.width = variables.canv.width = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalHeight) * (variables.size / 2)
-                variables.img.height = variables.canv.height = ((variables.img.naturalWidth  + variables.img.naturalHeight ) / variables.img.naturalWidth ) * (variables.size / 2)
+                // console.dir(variables.canv.width = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalHeight) * (variables.size / 2.1));
+                // variables.img.width = 
+                variables.canv.width = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalHeight) * (variables.size / 2.33)
+                // variables.img.height = 
+                variables.canv.height = ((variables.img.naturalWidth  + variables.img.naturalHeight ) / variables.img.naturalWidth ) * (variables.size / 2.33)
             }
-            // console.dir(variables.img);
             // console.log(variables.img.width,variables.img.height);
     
     
@@ -194,10 +187,12 @@ function ImageFiltering() {
         gb_var.EffectFilter=new IMAGEStriping.Effect(gb_var)
 
         variables.call('load')
+
         if (gb_var.EffectFilter.hasOwnProperty(variables.effect)) {
             requestAnimationFrame(ProcessImage(gb_var))
         //   requestAnimationFrame(function(){ProcessImage(gb_var)()})
         }else{
+
         variables.call('progress',100)
         ProcessImageComplete(gb_var)
         }
@@ -388,7 +383,31 @@ function ProcessImageComplete(gb_var,clearRect) {
                         gb_var.imgdata.data[gb_var.i + 2] = gb_var.imgdata.data[gb_var.i+2] - variables.effectIntensity;
         }
     }
-    variables.img.onload = onready;
+    
+    // variables.img.onload = onready;
+    console.log(variables.img.complete);
+    if (typeof variables.img === "string") {
+        variables.img=new Image();
+        variables.img.src=arguments[0].src
+        variables.img.addEventListener('load',onready)
+    }else if (variables.img instanceof HTMLImageElement) {
+         if (variables.img.complete) {
+             onready(true)
+         } else {
+            variables.img.addEventListener('load',onready)
+         }
+        }else{
+            return variables.callDelay('error',"invalid source> src: <Path, Url, HTMLImageElement, Blob, Bitmap>")
+        }
+        // console.log(1);
 
+    // this.done=new Promise(function(){variables.resolve=arguments[0];variables.reject=arguments[1]})
+    // console.log(variables.RGBCondition.LRRange([87, 87, 87,255],[20, 20, 20,255], 80));
+    // console.log(variables.RGBQuery.LRRange([87, 87, 87,255],[80, 80, 80,255], 50));
+
+
+    // variables.img.style.zoom = variables.canv.style.zoom = 0.2
+    // document.body.appendChild(variables.img)
+    document.body.appendChild(variables.canv.canvas)
     // console.log(sameRGB([80, 20, 0,1],[0, 0 ,0,1]));
 }
