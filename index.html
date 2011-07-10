@@ -10,48 +10,127 @@
             color: black;
         }
         img{
-           width: 200px;
+           width: 400px;
         }
-        
+        canvas{
+/* zoom: 4; */
+background-color: rgba(0, 0, 0, 0.219);
+
+        }
+        button{
+            border-radius: 100%;
+  overflow: hidden;
+  width: 50px;
+  height: 50px;
+  background: rgba(128, 128, 128, 0);
+  position: relative;
+  border: none;
+        }
+        button>canvas{
+            width: 50px;
+            position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+        }
     </style>
 </head>
 <body>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero temporibus adipisci porro aperiam doloribus, quam doloremque, maiores, consequuntur dolor modi consequatur atque voluptate dolorem aut repudiandae quod blanditiis praesentium perferendis?</p>
-    <img src="img-11.jpg" id="_img" onload="console.log(7777)">
-    <script src="imageFiltering.js"></script>
+    <!-- <img src="img-9.jpg" id="_img"> -->
+    <canvas id="canv" m></canvas>
+    <br>
+    <h2>Filters:</h2>
+    <button>    <canvas filter="HR painting"></canvas>    </button>
+    <button>    <canvas filter="smooth HR painting"></canvas>    </button>
+    <button>    <canvas filter="oil paints"></canvas>    </button>
+    <button>    <canvas filter="untitled 0"></canvas>    </button>
+    <button>    <canvas filter="untitled 1"></canvas>    </button>
+    <button>    <canvas filter="untitled 2"></canvas>    </button>
+    <script src="imageEditor.js"></script>
     <script>
-    var ft=new ImageFiltering({
-        src:"img-9.jpg",
-        src:"img-3.jpg",
-        src:"img-11.jpg",
-        src:_img,
+//         new Function(`
+//         "use strict"
+//         let window={}
 
+// console.log(window);
+
+// `)()
+var src="img-3.jpg"
+var updates=[];
+var img;
+var st = document.querySelectorAll("button canvas")
+for (var i = 0; i < st.length; i++) {
+    st[i].onclick = function(){
+        if (img) {
+            img.addEffect({filter:this.getAttribute('filter')})
+        }else{
+            console.log('still loading image');
+        }
+    }
+    new ImageEditor({
+        //source
+        src:src,
+        canvas:st[i],
+
+        //image
+        quality:1,
+        imageType:"image/png",
+        size:70,
+
+        //filter
+        // filterIntensity:50,
+        filter: st[i].getAttribute('filter'),
+    }).then(function(e){
+    updates.push(function(){
+        e.updateImage(arguments[0],true).then(function(){
+        e.addEffect({filter:-1});
+        });
+    })
+    });
+}
+
+    new ImageEditor({
+        //source
+        src:"img-9.jpg",
+        src:src,
+        // src:"img-11.jpg",
+        // src:_img,
+        canvas:canv,
+
+        //image
         quality:1,
         imageType:"image/jpeg",
         output:"dataURL",
+        size:400,
 
-        size:180*2,
-        size:200,
-
+        //filter
         // filterCoords:[100,100,100,100],
-        filterIntensity:50,
-        filter: "smooth hr painting"
-    })
+        // filterIntensity:50,
+        // filter: "untitled2",
+        // filterOverlay: true,
 
-    // ft.onerror = function(msg){
-    //     console.error(msg);
-    // }
-    // ft.onload = function(e){
-    //    // console.log('ready');
-    // }
-    ft.onprogress = function(e){
-       console.log(e);
-    }
-    ft.onready = function(e){
-        console.log(e);
-    }
+        //Events
+        onload:null,
+        onprogress:null,
+        onerror:null,
+        onready:null,
+
+        //settings
+        // disable_transition:true
+    }).then(function(e){
+        img=e
+        updates.push(function(){
+        e.updateImage(arguments[0],true)
+    })
+    });
     
-    console.log(ft);
+
+    function update(src) {
+        updates.forEach(function(){
+            arguments[0](src)
+        })
+    }
     </script>
 </body>
 </html>
