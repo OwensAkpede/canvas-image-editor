@@ -17,26 +17,6 @@ function ImageEditor() {
         canv: arguments[0].canvas instanceof HTMLCanvasElement ? arguments[0].canvas : document.createElement('canvas'),
         img: arguments[0].src,
         disable_transition: arguments[0].disable_transition || null,
-        // options: {
-        //     renderingSpeed: 1000,
-        //     quality: typeof arguments[0].quality == "number" ? arguments[0].quality : 1,
-        //     imageType: typeof arguments[0].imageType == "string" ? arguments[0].imageType : "image/jpeg",
-        //     output: typeof arguments[0].output == "string" ? arguments[0].output.toUpperCase() : null,
-        //     effect: typeof arguments[0].filter == "string" ? arguments[0].filter.toUpperCase().replace(/[^a-z0-9]/ig, '').replace(/\d/g, "_$&") : null,
-        //     effectIntensity: typeof arguments[0].filterIntensity == "number" ? arguments[0].filterIntensity : 50,
-        //     size: typeof arguments[0].size === "number" ? arguments[0].size : null,
-        //     coords: (arguments[0].filterCoords instanceof Array) && arguments[0].filterCoords.length === 4 ? arguments[0].filterCoords : null    
-        // },
-
-        // renderingSpeed: 1000,
-        // quality: typeof arguments[0].quality == "number" ? arguments[0].quality : 1,
-        // imageType: typeof arguments[0].imageType == "string" ? arguments[0].imageType : "image/jpeg",
-        // output: typeof arguments[0].output == "string" ? arguments[0].output.toUpperCase() : null,
-        // effect: typeof arguments[0].filter == "string" ? arguments[0].filter.toUpperCase().replace(/[^a-z0-9]/ig, '').replace(/\d/g, "_$&") : null,
-        // effectIntensity: typeof arguments[0].filterIntensity == "number" ? arguments[0].filterIntensity : 50,
-        // size: typeof arguments[0].size === "number" ? arguments[0].size : null,
-        // coords: (arguments[0].filterCoords instanceof Array) && arguments[0].filterCoords.length === 4 ? arguments[0].filterCoords : null,
-
         paints_0: [
             [211, 183, 43, 255], // x
             [134, 180, 34, 255], // x
@@ -175,10 +155,7 @@ function ImageEditor() {
     ];
 
 
-    // _this.__proto__ = new Promise(function(){variables.resolve=arguments[0];variables.reject=arguments[1]})
-    // _this.then=_this.__proto__.then
-    // _this.catch=_this.__proto__.catch
-    // // _this.__proto__={}
+
     function check_src() {
         variables.returned = new Promise(function () {
             variables.resolve = arguments[0];
@@ -221,9 +198,7 @@ function ImageEditor() {
             }
 
 
-            if (!variables.options.coords) {
-                // variables.options.coords = [0, 0, variables.canv.width, variables.canv.height]
-            }
+            
 
             variables.width = variables.canv.width;
             variables.height = variables.canv.height;
@@ -231,15 +206,7 @@ function ImageEditor() {
             variables.canv = variables.canv.getContext('2d');
             variables.canv.drawImage(variables.img, 0, 0, variables.width, variables.height)
 
-            // var gb_var = {
-            //     options: variables.options,
-            //     imgdata: variables.canv.getImageData(0, 0, variables.width, variables.height),
-            //     pr: [-255, -255, -255, -255],
-            //     nx: [-255, -255, -255, -255],
-            //     i: 0,
-            //     cpw: 0,
-            //     cph: 0
-            // };
+            
             variables.gb_var = {
                 options: variables.options,
                 original_img_data: variables.canv.getImageData(0, 0, variables.width, variables.height),
@@ -251,7 +218,6 @@ function ImageEditor() {
                 cph: 0
             };
         } else {
-            // var gb_var = arguments[0]
             variables.gb_var = arguments[0];
             arguments[1].__proto__ = variables
             variables = arguments[1]
@@ -285,7 +251,6 @@ function ImageEditor() {
             if (!arguments[1]) {
                 variables.canv.clearRect(0, 0, variables.width, variables.height)
             }
-          //  variables.canv = variables.canv.canvas
             variables.updating = true
             return check_src()
         }
@@ -527,18 +492,5 @@ function ImageEditor() {
         }
     }
 
-    // variables.img.style.zoom = variables.canv.style.zoom = 0.2
-    // document.body.appendChild(variables.img)
-    // document.body.appendChild(variables.canv)
-
-
-
-    // _this.done=new Promise(function(){variables.resolve=arguments[0];variables.reject=arguments[1]})
-    // console.log(variables.RGBCondition.LRRange([87, 87, 87,255],[20, 20, 20,255], 80));
-    // console.log(variables.RGBQuery.LRRange([87, 87, 87,255],[80, 80, 80,255], 50));
-
-
-
-    // console.log(sameRGB([80, 20, 0,1],[0, 0 ,0,1]));
     return check_src()
 }
