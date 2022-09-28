@@ -12,6 +12,9 @@
         img{
            width: 400px;
         }
+        #canv{
+            width: 500px;
+        }
         canvas{
 /* zoom: 4; */
 background-color: rgba(0, 0, 0, 0.219);
@@ -37,8 +40,7 @@ background-color: rgba(0, 0, 0, 0.219);
 </head>
 <body>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero temporibus adipisci porro aperiam doloribus, quam doloremque, maiores, consequuntur dolor modi consequatur atque voluptate dolorem aut repudiandae quod blanditiis praesentium perferendis?</p>
-    <!-- <img src="img-9.jpg" id="_img"> -->
-    <canvas id="canv" m></canvas>
+    <canvas id="canv"></canvas>
     <br>
     <h2>Filters:</h2>
     <button>    <canvas filter="HR painting"></canvas>    </button>
@@ -51,7 +53,7 @@ background-color: rgba(0, 0, 0, 0.219);
     <script>
 
 
-var src="img-3.jpg"
+var src="img-3.jpgl"
 var updates=[];
 var img;
 var st = document.querySelectorAll("button canvas")
@@ -97,7 +99,8 @@ for (var i = 0; i < st.length; i++) {
         quality:1,
         imageType:"image/jpeg",
         output:"dataURL",
-        size:400,
+        size:canv.offsetWidth,
+        //max-size:400,
 
         //filter
         // filterCoords:[100,100,100,100],

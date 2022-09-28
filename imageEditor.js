@@ -166,20 +166,23 @@ function ImageEditor() {
             variables.src = variables.img;
             variables.img = new Image();
             variables.img.src = variables.src
-            variables.img.addEventListener('load', all_ready)
+            check_src.img()
         } else if (variables.img instanceof HTMLImageElement) {
-            if (variables.img.complete) {
-                all_ready(true)
-            } else {
-                variables.img.addEventListener('load', all_ready)
-            }
+            check_src.img()
         } else {
             variables.reject("invalid source> src: <Path, Url, HTMLImageElement, Blob, Bitmap>")
             return variables.callDelay(['error'], "invalid source> src: <Path, Url, HTMLImageElement, Blob, Bitmap>")
         }
         return variables.returned
     }
-
+    check_src.img = function(){
+        if (variables.img.complete) {
+            all_ready(true)
+        } else {
+            variables.img.addEventListener('load', all_ready)
+            variables.img.addEventListener('error', all_ready)
+        }
+    }
     function all_ready() {
 
         if (variables.updating) {
@@ -189,22 +192,44 @@ function ImageEditor() {
         }
 
         if (arguments[0] instanceof Event || arguments[0] === true) {
-            if (!variables.options.size) {
-                variables.canv.width = variables.img.naturalHeight
-                variables.canv.height = variables.img.naturalWidth
-            } else {
-                variables.canv.width = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalHeight) * (variables.options.size / 2.49)
-                variables.canv.height = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalWidth) * (variables.options.size / 2.49)
-            }
+        if (arguments[0].type==="error") {
+             if (variables.options.size) {
+                variables.width_radio = ((variables.canv.width + variables.canv.height) /  variables.canv.height)
+                variables.height_radio = ((variables.canv.width + variables.canv.height) / variables.canv.width)
+                
+                variables.width = variables.width_radio * (variables.options.size / variables.width_radio)
+                variables.height = variables.height_radio * (variables.options.size / variables.width_radio)
+            }else{
+                    variables.width = variables.canv.width
+                    variables.height= variables.canv.height
+                }
+        } else {
+                if (!variables.options.size) {
+                    variables.width = variables.img.naturalHeight
+                    variables.height= variables.img.naturalWidth
+                } else {
+                    variables.width_radio = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalHeight)
+                    variables.height_radio = ((variables.img.naturalWidth + variables.img.naturalHeight) / variables.img.naturalWidth)
+
+                    variables.width = variables.width_radio * (variables.options.size / variables.width_radio)
+                    variables.height = variables.height_radio * (variables.options.size / variables.width_radio)
+                }
+        }
 
 
-            
+            // console.log(variables.width_radio,'-',variables.height_radio);
 
-            variables.width = variables.canv.width;
-            variables.height = variables.canv.height;
+        variables.canv.style.width=
+         (variables.canv.width =variables.width)+"px";
+        variables.canv.style.height = 
+        (variables.canv.height=variables.height)+"px";
+
 
             variables.canv = variables.canv.getContext('2d');
+
+        if (arguments[0].type!=="error") {
             variables.canv.drawImage(variables.img, 0, 0, variables.width, variables.height)
+        }
 
             
             variables.gb_var = {
@@ -245,7 +270,6 @@ function ImageEditor() {
     function IMGController() {
 
         this.updateImage = function () {
-            console.log(variables.canv);
             variables.img = arguments[0]
             variables.gb_var.imgdata.closed=true
             if (!arguments[1]) {
