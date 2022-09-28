@@ -39,7 +39,7 @@ background-color: rgba(0, 0, 0, 0.219);
     </style>
 </head>
 <body>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero temporibus adipisci porro aperiam doloribus, quam doloremque, maiores, consequuntur dolor modi consequatur atque voluptate dolorem aut repudiandae quod blanditiis praesentium perferendis?</p>
+    <p>Upload an image</p>
     <canvas id="canv"></canvas>
     <br>
     <h2>Filters:</h2>
@@ -53,7 +53,8 @@ background-color: rgba(0, 0, 0, 0.219);
     <script>
 
 
-var src="img-3.jpgl"
+var src="img-3.jpg"
+// var src=""
 var updates=[];
 var img;
 var st = document.querySelectorAll("button canvas")
@@ -100,7 +101,6 @@ for (var i = 0; i < st.length; i++) {
         imageType:"image/jpeg",
         output:"dataURL",
         size:canv.offsetWidth,
-        //max-size:400,
 
         //filter
         // filterCoords:[100,100,100,100],

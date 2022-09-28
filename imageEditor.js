@@ -217,7 +217,6 @@ function ImageEditor() {
         }
 
 
-            // console.log(variables.width_radio,'-',variables.height_radio);
 
         variables.canv.style.width=
          (variables.canv.width =variables.width)+"px";
