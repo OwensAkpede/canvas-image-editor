@@ -36,12 +36,25 @@ background-color: rgba(0, 0, 0, 0.219);
   left: 50%;
   transform: translate(-50%,-50%);
         }
+        a{
+            padding: 7px 10px;
+  display: inline-block;
+  background: rgb(133, 255, 113);
+  cursor: pointer;
+  border-radius: 50px;
+  margin: 5px;
+  border: 1px solid;
+        }
+        [save]{
+            background: rgb(200, 200, 200);
+        }
     </style>
 </head>
 <body>
-    <p>Upload an image</p>
+    <a onclick="upload()">Upload an image</a>
+    <div>
     <canvas id="canv"></canvas>
-    <br>
+    </div>
     <h2>Filters:</h2>
     <button>    <canvas filter="HR painting"></canvas>    </button>
     <button>    <canvas filter="smooth HR painting"></canvas>    </button>
@@ -49,6 +62,9 @@ background-color: rgba(0, 0, 0, 0.219);
     <button>    <canvas filter="untitled 0"></canvas>    </button>
     <button>    <canvas filter="untitled 1"></canvas>    </button>
     <button>    <canvas filter="untitled 2"></canvas>    </button>
+    <br>
+    <a onclick="save()" save>Save image</a>
+
     <script src="imageEditor.js"></script>
     <script>
 
@@ -90,10 +106,10 @@ for (var i = 0; i < st.length; i++) {
 
     new ImageEditor({
         //source
-        src:"img-9.jpg",
-        src:src,
+        // src:"img-9.jpg",
         // src:"img-11.jpg",
         // src:_img,
+        src:src,
         canvas:canv,
 
         //image
@@ -130,6 +146,32 @@ for (var i = 0; i < st.length; i++) {
         })
     }
     
+    function upload() {
+        upload.input.click();
+        upload.input.onchange = function(){
+            if (upload.input.files[0].type.split("/")[0]==="image") {
+                update(upload.input.files[0])
+            }
+        }
+    }
+
+    function save() {
+        if (img) {
+            img.getDataURL().then(function(){
+                save.a.download="Web Image - "+Date.now()
+                save.a.href=arguments[0]
+                save.a.click()
+                save.a.href=""
+            });
+        }else{
+            console.log('still loading image');
+        }
+    }
+
+    save.a=document.createElement('a');
+
+    upload.input=document.createElement("input")
+    upload.input.type="file"
     </script>
 </body>
 </html>

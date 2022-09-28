@@ -162,6 +162,10 @@ function ImageEditor() {
             variables.reject = arguments[1]
         })
 
+        if (variables.canv instanceof HTMLCanvasElement && variables.canv.hasAttribute("src")) {
+            variables.img=variables.canv.getAttribute("src")
+        }
+
         if (typeof variables.img === "string") {
             variables.src = variables.img;
             variables.img = new Image();
@@ -169,7 +173,28 @@ function ImageEditor() {
             check_src.img()
         } else if (variables.img instanceof HTMLImageElement) {
             check_src.img()
-        } else {
+        } else if (variables.img instanceof Blob) {
+            if (typeof window.createImageBitmap === "function") {
+                variables.img=window.createImageBitmap(variables.img)
+                variables.img.then(function(){
+                    variables.img=arguments[0]
+                    variables.img.naturalHeight=variables.img.height
+                    variables.img.naturalWidth=variables.img.width
+                    all_ready(true)
+                }).catch(function(){
+                    variables.img = new Image();
+                    variables.img.src = "";
+                    check_src.img()
+                });
+            }else{
+                variables.img=URL.createObjectURL(variables.img);
+                variables.src = variables.img;
+                variables.objectURL = true;
+                variables.img = new Image();
+                variables.img.src = variables.src
+                check_src.img()
+            }
+        }else {
             variables.reject("invalid source> src: <Path, Url, HTMLImageElement, Blob, Bitmap>")
             return variables.callDelay(['error'], "invalid source> src: <Path, Url, HTMLImageElement, Blob, Bitmap>")
         }
@@ -184,7 +209,10 @@ function ImageEditor() {
         }
     }
     function all_ready() {
-
+if (variables.objectURL) {
+    URL.revokeObjectURL(variables.src)
+    delete variables.objectURL
+}
         if (variables.updating) {
             variables.canv=variables.canv.canvas;
             variables.updating=null
@@ -194,11 +222,11 @@ function ImageEditor() {
         if (arguments[0] instanceof Event || arguments[0] === true) {
         if (arguments[0].type==="error") {
              if (variables.options.size) {
-                variables.width_radio = ((variables.canv.width + variables.canv.height) /  variables.canv.height)
-                variables.height_radio = ((variables.canv.width + variables.canv.height) / variables.canv.width)
-                
-                variables.width = variables.width_radio * (variables.options.size / variables.width_radio)
-                variables.height = variables.height_radio * (variables.options.size / variables.width_radio)
+                 variables.width_radio = ((variables.canv.width + variables.canv.height) /  variables.canv.height)
+                 variables.height_radio = ((variables.canv.width + variables.canv.height) / variables.canv.width)
+                 
+                 variables.width = variables.width_radio * (variables.options.size / variables.width_radio)
+                 variables.height = variables.height_radio * (variables.options.size / variables.width_radio)
             }else{
                     variables.width = variables.canv.width
                     variables.height= variables.canv.height
@@ -230,6 +258,9 @@ function ImageEditor() {
             variables.canv.drawImage(variables.img, 0, 0, variables.width, variables.height)
         }
 
+        if (variables.img instanceof ImageBitmap) {
+            variables.img.close()
+        }
             
             variables.gb_var = {
                 options: variables.options,
