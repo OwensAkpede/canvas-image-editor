@@ -136,12 +136,12 @@ function ImageEditor() {
             return {
                 renderingSpeed: 1000,
                 quality: typeof arguments[0].quality == "number" ? arguments[0].quality : 1,
-                imageType: typeof arguments[0].imageType == "string" ? arguments[0].imageType : "image/jpeg",
+                imageType: typeof arguments[0].image_type == "string" ? arguments[0].image_type : "image/jpeg",
                 output: typeof arguments[0].output == "string" ? arguments[0].output.toUpperCase() : null,
-                effect: typeof arguments[0].filter == "string" ? arguments[0].filter.toUpperCase().replace(/[^a-z0-9]/ig, '').replace(/\d/g, "_$&") : arguments[0].filter===-1?variables.options.effect:null,
-                effectIntensity: typeof arguments[0].filterIntensity == "number" ? arguments[0].filterIntensity : 50,
+                effect: typeof arguments[0].filter_style == "string" ? arguments[0].filter_style.toUpperCase().replace(/[^a-z0-9]/ig, '').replace(/\d/g, "_$&") : arguments[0].filter_style===-1?variables.options.effect:null,
+                effectIntensity: typeof arguments[0].filter_intensity == "number" ? arguments[0].filter_intensity : 50,
                 size: typeof arguments[0].size === "number" ? arguments[0].size : null,
-                coords: (arguments[0].filterCoords instanceof Array) && arguments[0].filterCoords.length === 4 ? arguments[0].filterCoords : null
+                coords: (arguments[0].filter_coords instanceof Array) && arguments[0].filter_coords.length === 4 ? arguments[0].filter_coords : null
             };
         }
     }

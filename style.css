@@ -1,0 +1,47 @@
+
+body{
+    font-family: sans-serif;
+    font-weight: 400;
+}
+p{
+    color: black;
+}
+img{
+   width: 400px;
+}
+#canv{
+    width: 500px;
+}
+canvas{
+/* zoom: 4; */
+background-color: rgba(0, 0, 0, 0.219);
+
+}
+button{
+    border-radius: 100%;
+overflow: hidden;
+width: 50px;
+height: 50px;
+background: rgba(128, 128, 128, 0);
+position: relative;
+border: none;
+}
+button>canvas{
+    width: 50px;
+    position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%,-50%);
+}
+a{
+    padding: 7px 10px;
+display: inline-block;
+background: rgb(133, 255, 113);
+cursor: pointer;
+border-radius: 50px;
+margin: 5px;
+border: 1px solid;
+}
+[save]{
+    background: rgb(200, 200, 200);
+}

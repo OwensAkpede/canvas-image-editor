@@ -1,56 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        p{
-            color: black;
-        }
-        img{
-           width: 400px;
-        }
-        #canv{
-            width: 500px;
-        }
-        canvas{
-/* zoom: 4; */
-background-color: rgba(0, 0, 0, 0.219);
-
-        }
-        button{
-            border-radius: 100%;
-  overflow: hidden;
-  width: 50px;
-  height: 50px;
-  background: rgba(128, 128, 128, 0);
-  position: relative;
-  border: none;
-        }
-        button>canvas{
-            width: 50px;
-            position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-        }
-        a{
-            padding: 7px 10px;
-  display: inline-block;
-  background: rgb(133, 255, 113);
-  cursor: pointer;
-  border-radius: 50px;
-  margin: 5px;
-  border: 1px solid;
-        }
-        [save]{
-            background: rgb(200, 200, 200);
-        }
-    </style>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="imageEditor.js"></script>
+        <script src="script.js"></script>
 </head>
 <body>
+
     <a onclick="upload()">Upload an image</a>
     <div>
     <canvas id="canv"></canvas>
@@ -64,114 +24,5 @@ background-color: rgba(0, 0, 0, 0.219);
     <button>    <canvas filter="untitled 2"></canvas>    </button>
     <br>
     <a onclick="save()" save>Save image</a>
-
-    <script src="imageEditor.js"></script>
-    <script>
-
-
-var src="img-3.jpg"
-// var src=""
-var updates=[];
-var img;
-var st = document.querySelectorAll("button canvas")
-for (var i = 0; i < st.length; i++) {
-    st[i].onclick = function(){
-        if (img) {
-            img.addEffect({filter:this.getAttribute('filter')})
-        }else{
-            console.log('still loading image');
-        }
-    }
-    new ImageEditor({
-        //source
-        src:src,
-        canvas:st[i],
-
-        //image
-        quality:1,
-        imageType:"image/png",
-        size:70,
-
-        //filter
-        // filterIntensity:50,
-        filter: st[i].getAttribute('filter'),
-    }).then(function(e){
-    updates.push(function(){
-        e.updateImage(arguments[0],true).then(function(){
-        e.addEffect({filter:-1});
-        });
-    })
-    });
-}
-
-    new ImageEditor({
-        //source
-        // src:"img-9.jpg",
-        // src:"img-11.jpg",
-        // src:_img,
-        src:src,
-        canvas:canv,
-
-        //image
-        quality:1,
-        imageType:"image/jpeg",
-        output:"dataURL",
-        size:canv.offsetWidth,
-
-        //filter
-        // filterCoords:[100,100,100,100],
-        // filterIntensity:50,
-        // filter: "untitled2",
-        // filterOverlay: true,
-
-        //Events
-        onload:null,
-        onprogress:null,
-        onerror:null,
-        onready:null,
-
-        //settings
-        // disable_transition:true
-    }).then(function(e){
-        img=e
-        updates.push(function(){
-        e.updateImage(arguments[0],true)
-    })
-    });
-    
-
-    function update(src) {
-        updates.forEach(function(){
-            arguments[0](src)
-        })
-    }
-    
-    function upload() {
-        upload.input.click();
-        upload.input.onchange = function(){
-            if (upload.input.files[0].type.split("/")[0]==="image") {
-                update(upload.input.files[0])
-            }
-        }
-    }
-
-    function save() {
-        if (img) {
-            img.getDataURL().then(function(){
-                save.a.download="Web Image - "+Date.now()
-                save.a.href=arguments[0]
-                save.a.click()
-                save.a.href=""
-            });
-        }else{
-            console.log('still loading image');
-        }
-    }
-
-    save.a=document.createElement('a');
-
-    upload.input=document.createElement("input")
-    upload.input.type="file"
-    </script>
 </body>
 </html>
