@@ -103,7 +103,7 @@ HTMLCanvasElement
 
 ## filter_style
   this option defineds the filter style or rather, the effect.
-  [here for list of supported style](#listoffilters)
+  [here for list of supported style](#list_of_filters)
   \<String\>
 
   ```js
