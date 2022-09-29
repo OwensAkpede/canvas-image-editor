@@ -103,7 +103,7 @@ HTMLCanvasElement
 
 ## filter_style
   this option defineds the filter style or rather, the effect.
-  [here for list of supported style]()
+  [here for list of supported style](#listoffilters)
   \<String\>
 
   ```js
@@ -173,3 +173,11 @@ function(message) {
   ```js
  true || false
   ```
+
+# list_of_filters
+ - hr_painting
+ - smooth_hr_painting
+ - oil_paints
+ - untitled_0
+ - untitled_1
+ - untitled_2
