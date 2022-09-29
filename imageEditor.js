@@ -16,7 +16,7 @@ function ImageEditor() {
         class: _this,
         canv: arguments[0].canvas instanceof HTMLCanvasElement ? arguments[0].canvas : document.createElement('canvas'),
         img: arguments[0].src,
-        disable_transition: arguments[0].disable_transition || null,
+        enable_transition: arguments[0].enable_transition,
         paints_0: [
             [211, 183, 43, 255], // x
             [134, 180, 34, 255], // x
@@ -135,9 +135,10 @@ function ImageEditor() {
             }
             return {
                 renderingSpeed: 1000,
-                quality: typeof arguments[0].quality == "number" ? arguments[0].quality : 1,
+                rendering_quality: typeof arguments[0].rendering_quality == "string" ? arguments[0].rendering_quality : 'medium',
+                output_quality: typeof arguments[0].output_quality == "number" ? arguments[0].output_quality : 1,
                 imageType: typeof arguments[0].image_type == "string" ? arguments[0].image_type : "image/jpeg",
-                output: typeof arguments[0].output == "string" ? arguments[0].output.toUpperCase() : null,
+                output: typeof arguments[0].output_type == "string" ? arguments[0].output_type.toUpperCase() : null,
                 effect: typeof arguments[0].filter_style == "string" ? arguments[0].filter_style.toUpperCase().replace(/[^a-z0-9]/ig, '').replace(/\d/g, "_$&") : arguments[0].filter_style===-1?variables.options.effect:null,
                 effectIntensity: typeof arguments[0].filter_intensity == "number" ? arguments[0].filter_intensity : 50,
                 size: typeof arguments[0].size === "number" ? arguments[0].size : null,
@@ -208,6 +209,8 @@ function ImageEditor() {
             variables.img.addEventListener('error', all_ready)
         }
     }
+
+
     function all_ready() {
 if (variables.objectURL) {
     URL.revokeObjectURL(variables.src)
@@ -245,14 +248,21 @@ if (variables.objectURL) {
         }
 
 
+        variables.canv.width =variables.width
+        variables.canv.style.width="auto";
+        // variables.canv.style.width=variables.canv.width+"px";
 
-        variables.canv.style.width=
-         (variables.canv.width =variables.width)+"px";
-        variables.canv.style.height = 
-        (variables.canv.height=variables.height)+"px";
-
+         variables.canv.height=variables.height
+         variables.canv.style.height="auto"
+         //  variables.canv.style.height=variables.canv.height+"px";
+         
+        // variables.canv.style.height = 
+        // (variables.canv.height=variables.height)+"px";
+        // variables.canv.style.height = 
+        // (variables.canv.height=variables.height)+"px";
 
             variables.canv = variables.canv.getContext('2d');
+            variables.canv.imageSmoothingQuality=variables.options.rendering_quality
 
         if (arguments[0].type!=="error") {
             variables.canv.drawImage(variables.img, 0, 0, variables.width, variables.height)
@@ -415,12 +425,12 @@ if (variables.objectURL) {
         } else if (gb_var.options.output === "IMAGEDATE") {
             variables.call(gb_var.options.event[2], gb_var.imgdata)
         } else if (gb_var.options.output === "DATAURL") {
-            variables.call(gb_var.options.event[2], variables.canv.canvas.toDataURL(gb_var.options.imageType, gb_var.options.quality))
+            variables.call(gb_var.options.event[2], variables.canv.canvas.toDataURL(gb_var.options.imageType, gb_var.options.output_quality))
         } else if (gb_var.options.output === "BLOB") {
             if (typeof variables.canv.canvas.toBlob === "function") {
                 variables.canv.canvas.toBlob(function () {
                     variables.call(gb_var.options.event[2], arguments[0])
-                }, gb_var.options.imageType, gb_var.options.quality || 1)
+                }, gb_var.options.imageType, gb_var.options.output_quality || 1)
             } else {
                 /*
                 
@@ -471,7 +481,7 @@ if (variables.objectURL) {
                     gb_var.EffectFilter[gb_var.options.effect]()
                 }
 
-                if (!variables.disable_transition) {
+                if (variables.enable_transition) {
                     variables.canv.fillStyle = `rgba(${gb_var.imgdata.data[gb_var.i]},${gb_var.imgdata.data[gb_var.i+1]},${gb_var.imgdata.data[gb_var.i+2]},${gb_var.imgdata.data[gb_var.i+3]})`;
                     variables.canv.fillRect(gb_var.cpw, gb_var.cph, 1, 1);
                 }

@@ -11,6 +11,9 @@ img{
 }
 #canv{
     width: 500px;
+    max-height: 66vh;
+    max-width: 80vw;
+    /* height: "auto"; */
 }
 canvas{
 /* zoom: 4; */
@@ -25,6 +28,7 @@ height: 50px;
 background: rgba(128, 128, 128, 0);
 position: relative;
 border: none;
+margin-right: 2px;
 }
 button>canvas{
     width: 50px;
