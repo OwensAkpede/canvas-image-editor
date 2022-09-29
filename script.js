@@ -36,6 +36,7 @@ upload.input.accept="image/*,video/*"
 
 var img;
 var src="img-9.jpg"
+var src="img-3.jpg"
 var updates=[];
 
 window.onload = function(){
