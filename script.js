@@ -10,6 +10,7 @@ function upload() {
         if (upload.input.files[0].type.search(/^(image|video)+\//i)>=0) {
             update(upload.input.files[0])
         }
+        upload.input.value=""
     }
 }
 
